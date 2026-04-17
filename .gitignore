@@ -1,0 +1,26 @@
+# Gradle
+/build/
+**/build/
+.gradle/
+gradle-app.setting
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project outputs
+converted/
+.tmp/
+**/*.log
+
+# JVM / compiler
+*.class
+hs_err_pid*
+replay_pid*
