@@ -11,6 +11,9 @@ gradle-app.setting
 *.iws
 out/
 
+# IntelliJ Platform Gradle Plugin sandbox/cache
+.intellijPlatform/
+
 # OS
 .DS_Store
 Thumbs.db
