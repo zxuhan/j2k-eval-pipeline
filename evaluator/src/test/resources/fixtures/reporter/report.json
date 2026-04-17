@@ -1,0 +1,86 @@
+{
+  "aggregate": {
+    "fileCount": 1,
+    "totalCodeLines": 40,
+    "totalNotNullAssertions": 3,
+    "files": [
+      {
+        "path": "build/converted/demo/Hello.kt",
+        "structural": {
+          "classes": 2,
+          "objects": 1,
+          "interfaces": 0,
+          "functions": 4,
+          "properties": 3,
+          "maxNestingDepth": 2,
+          "meanNestingDepth": 1.5000,
+          "codeLines": 40,
+          "commentLines": 6,
+          "commentRatio": 0.1304
+        },
+        "idiom": {
+          "dataClasses": 1,
+          "objectSingletons": 1,
+          "companionObjects": 0,
+          "lambdaArguments": 2,
+          "samObjectExpressions": 0,
+          "trailingLambdas": 2,
+          "whenExpressions": 1,
+          "ifElseChains": 0,
+          "stringTemplates": 3,
+          "scopeFunctionCalls": 1,
+          "propertyAccessors": 0
+        },
+        "javaIsm": {
+          "notNullAssertions": 3,
+          "notNullAssertionsPerKloc": 75.0000,
+          "explicitGetterSetterPairs": 0,
+          "javaUtilCollectionRefs": 1,
+          "ifNotNullGuards": 2,
+          "cStyleForLoops": 0,
+          "synchronizedAnnotations": 1,
+          "platformTypeReferences": 0
+        }
+      }
+    ]
+  },
+  "comparative": {
+    "referenceRoot": "build/reference",
+    "pairCount": 1,
+    "unmatchedConvertedCount": 0,
+    "unmatchedReferenceCount": 2,
+    "meanSimilarity": 0.7500,
+    "medianSimilarity": 0.7500,
+    "p90Similarity": 0.7500,
+    "files": [
+      {
+        "path": "build/converted/demo/Hello.kt",
+        "referencePath": "build/reference/demo/Hello.kt",
+        "similarity": 0.7500,
+        "convertedTokens": 20,
+        "referenceTokens": 25
+      }
+    ],
+    "topDivergent": [
+      {
+        "path": "build/converted/demo/Hello.kt",
+        "referencePath": "build/reference/demo/Hello.kt",
+        "similarity": 0.7500,
+        "convertedTokens": 20,
+        "referenceTokens": 25
+      }
+    ]
+  },
+  "compile": {
+    "compiledCount": 1,
+    "failedCount": 0,
+    "passRate": 1.0000,
+    "files": [
+      {
+        "path": "build/converted/demo/Hello.kt",
+        "compiled": true,
+        "errors": []
+      }
+    ]
+  }
+}

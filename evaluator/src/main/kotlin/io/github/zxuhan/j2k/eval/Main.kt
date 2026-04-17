@@ -6,16 +6,20 @@ import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.path
+import io.github.zxuhan.j2k.eval.analysis.ComparativeAnalyzer
+import io.github.zxuhan.j2k.eval.analysis.CompileAnalyzer
 import io.github.zxuhan.j2k.eval.analysis.IdiomAnalyzer
 import io.github.zxuhan.j2k.eval.analysis.JavaIsmAnalyzer
 import io.github.zxuhan.j2k.eval.analysis.StructuralAnalyzer
 import io.github.zxuhan.j2k.eval.model.AggregateAnalysis
 import io.github.zxuhan.j2k.eval.model.FileAnalysis
-import io.github.zxuhan.j2k.eval.model.IdiomMetrics
-import io.github.zxuhan.j2k.eval.model.JavaIsmMetrics
-import io.github.zxuhan.j2k.eval.model.StructuralMetrics
+import io.github.zxuhan.j2k.eval.model.Report
 import io.github.zxuhan.j2k.eval.psi.KotlinPsiFactory
+import io.github.zxuhan.j2k.eval.report.JsonReporter
+import io.github.zxuhan.j2k.eval.report.MarkdownReporter
 import java.nio.file.Path
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectories
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
 import kotlin.io.path.walk
@@ -31,10 +35,16 @@ private class Analyze : CliktCommand(name = "analyze") {
         .path(mustExist = true, canBeFile = false, canBeDir = true)
         .required()
 
-    private val out by option("--out", help = "Write JSON to this path instead of stdout")
-        .path(canBeFile = true, canBeDir = false)
+    private val reference by option("--reference", help = "Directory of reference Kotlin files (e.g. hand-migrated OkHttp 4.x) for comparative analysis")
+        .path(mustExist = true, canBeFile = false, canBeDir = true)
 
-    @OptIn(kotlin.io.path.ExperimentalPathApi::class)
+    private val classpath by option("--classpath", help = "File containing compile classpath (one jar per line); enables compile check")
+        .path(mustExist = true, canBeFile = true, canBeDir = false)
+
+    private val outDir by option("--out-dir", help = "Write report.json and report.md into this directory")
+        .path(canBeFile = false, canBeDir = true)
+
+    @OptIn(ExperimentalPathApi::class)
     override fun run() {
         val structural = StructuralAnalyzer()
         val idiom = IdiomAnalyzer()
@@ -52,108 +62,34 @@ private class Analyze : CliktCommand(name = "analyze") {
                 )
             }
             val aggregate = AggregateAnalysis(fileAnalyses)
-            val json = Json.encode(aggregate)
-            out?.writeText(json) ?: println(json)
+
+            val comparative = reference?.let { ref ->
+                ComparativeAnalyzer(psi).analyze(input, ref)
+            }
+            val compile = classpath?.let { cp ->
+                CompileAnalyzer().analyze(input, cp)
+            }
+
+            val report = Report(aggregate = aggregate, comparative = comparative, compile = compile)
+
+            val json = JsonReporter().encode(report)
+            val md = MarkdownReporter().render(report)
+
+            val dest = outDir
+            if (dest == null) {
+                println(json)
+            } else {
+                dest.createDirectories()
+                dest.resolve("report.json").writeText(json)
+                dest.resolve("report.md").writeText(md)
+                System.err.println("wrote ${dest.resolve("report.json")}")
+                System.err.println("wrote ${dest.resolve("report.md")}")
+            }
         }
     }
 
-    @OptIn(kotlin.io.path.ExperimentalPathApi::class)
+    @OptIn(ExperimentalPathApi::class)
     private fun collectKotlinFiles(root: Path): List<Path> =
         if (!root.isDirectory()) emptyList()
         else root.walk().filter { it.extension == "kt" }.sorted().toList()
-}
-
-private object Json {
-    fun encode(a: AggregateAnalysis): String = buildString {
-        append("{\n")
-        append("  \"fileCount\": ").append(a.fileCount).append(",\n")
-        append("  \"totalCodeLines\": ").append(a.totalCodeLines).append(",\n")
-        append("  \"totalNotNullAssertions\": ").append(a.totalNotNullAssertions).append(",\n")
-        append("  \"files\": [\n")
-        a.files.forEachIndexed { i, f ->
-            append(encodeFile(f, indent = "    "))
-            if (i != a.files.lastIndex) append(",")
-            append("\n")
-        }
-        append("  ]\n}")
-    }
-
-    private fun encodeFile(f: FileAnalysis, indent: String): String = buildString {
-        append(indent).append("{\n")
-        append(indent).append("  \"path\": ").append(str(f.path)).append(",\n")
-        append(indent).append("  \"structural\": ").append(encode(f.structural, "$indent  ")).append(",\n")
-        append(indent).append("  \"idiom\": ").append(encode(f.idiom, "$indent  ")).append(",\n")
-        append(indent).append("  \"javaIsm\": ").append(encode(f.javaIsm, "$indent  ")).append("\n")
-        append(indent).append("}")
-    }
-
-    private fun encode(m: StructuralMetrics, indent: String): String = obj(indent,
-        "classes" to m.classes,
-        "objects" to m.objects,
-        "interfaces" to m.interfaces,
-        "functions" to m.functions,
-        "properties" to m.properties,
-        "maxNestingDepth" to m.maxNestingDepth,
-        "meanNestingDepth" to m.meanNestingDepth,
-        "codeLines" to m.codeLines,
-        "commentLines" to m.commentLines,
-        "commentRatio" to m.commentRatio,
-    )
-
-    private fun encode(m: IdiomMetrics, indent: String): String = obj(indent,
-        "dataClasses" to m.dataClasses,
-        "objectSingletons" to m.objectSingletons,
-        "companionObjects" to m.companionObjects,
-        "lambdaArguments" to m.lambdaArguments,
-        "samObjectExpressions" to m.samObjectExpressions,
-        "trailingLambdas" to m.trailingLambdas,
-        "whenExpressions" to m.whenExpressions,
-        "ifElseChains" to m.ifElseChains,
-        "stringTemplates" to m.stringTemplates,
-        "scopeFunctionCalls" to m.scopeFunctionCalls,
-        "propertyAccessors" to m.propertyAccessors,
-    )
-
-    private fun encode(m: JavaIsmMetrics, indent: String): String = obj(indent,
-        "notNullAssertions" to m.notNullAssertions,
-        "notNullAssertionsPerKloc" to m.notNullAssertionsPerKloc,
-        "explicitGetterSetterPairs" to m.explicitGetterSetterPairs,
-        "javaUtilCollectionRefs" to m.javaUtilCollectionRefs,
-        "ifNotNullGuards" to m.ifNotNullGuards,
-        "cStyleForLoops" to m.cStyleForLoops,
-        "synchronizedAnnotations" to m.synchronizedAnnotations,
-        "platformTypeReferences" to m.platformTypeReferences,
-    )
-
-    private fun obj(indent: String, vararg entries: Pair<String, Any>): String = buildString {
-        append("{\n")
-        entries.forEachIndexed { i, (k, v) ->
-            append(indent).append("  ").append(str(k)).append(": ").append(scalar(v))
-            if (i != entries.lastIndex) append(",")
-            append("\n")
-        }
-        append(indent).append("}")
-    }
-
-    private fun scalar(v: Any): String = when (v) {
-        is Double -> if (v.isFinite()) "%.4f".format(v) else "0"
-        is Number, is Boolean -> v.toString()
-        else -> str(v.toString())
-    }
-
-    private fun str(s: String): String {
-        val sb = StringBuilder("\"")
-        for (c in s) {
-            when (c) {
-                '\\' -> sb.append("\\\\")
-                '"' -> sb.append("\\\"")
-                '\n' -> sb.append("\\n")
-                '\r' -> sb.append("\\r")
-                '\t' -> sb.append("\\t")
-                else -> sb.append(c)
-            }
-        }
-        sb.append("\"")
-        return sb.toString()
-    }
 }
