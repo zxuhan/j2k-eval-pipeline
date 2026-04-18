@@ -12,7 +12,7 @@ help:
 	@echo "  evaluate          run evaluator on build/postprocessed -> build/report.{json,md}"
 	@echo "  all               fetch + resolve-classpath + convert + postprocess + evaluate"
 	@echo "  eval-edge-cases   run pipeline on the custom edge-case dataset"
-	@echo "  ci-local          reproduce the full CI pipeline locally (commit 7+)"
+	@echo "  ci-local          reproduce the full CI pipeline locally end-to-end"
 	@echo "  clean             remove build outputs and fetched sources"
 
 fetch:
@@ -55,8 +55,14 @@ eval-edge-cases:
 	    --input build/edge-converted \
 	    --out-dir build/edge-reports
 
-ci-local:
-	@echo "not yet — wired in commit 7"; exit 1
+ci-local: fetch resolve-classpath convert postprocess evaluate eval-edge-cases
+	@echo ""
+	@echo "==== build/report.md ===="
+	@cat build/report.md
+	@echo ""
+	@echo "==== artifacts ===="
+	@ls -la build/report.json build/report.md build/diagnostics.json \
+	    build/edge-reports/report.json build/edge-reports/report.md 2>/dev/null
 
 clean:
 	rm -rf build **/build .gradle/.tmp converted .tmp
