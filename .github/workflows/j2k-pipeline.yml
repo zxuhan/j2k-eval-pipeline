@@ -48,7 +48,10 @@ jobs:
       - name: Convert Java → Kotlin (OkHttp)
         run: make convert
 
-      - name: Evaluate converted OkHttp
+      - name: Post-process (restore dropped javax.annotation imports)
+        run: make postprocess
+
+      - name: Evaluate post-processed OkHttp
         run: make evaluate
 
       - name: Convert + evaluate edge-case dataset
@@ -61,6 +64,7 @@ jobs:
           name: converted
           path: |
             build/converted/
+            build/postprocessed/
             build/edge-converted/
           if-no-files-found: warn
 
