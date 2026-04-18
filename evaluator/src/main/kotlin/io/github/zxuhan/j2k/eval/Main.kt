@@ -14,6 +14,7 @@ import io.github.zxuhan.j2k.eval.analysis.StructuralAnalyzer
 import io.github.zxuhan.j2k.eval.model.AggregateAnalysis
 import io.github.zxuhan.j2k.eval.model.FileAnalysis
 import io.github.zxuhan.j2k.eval.model.Report
+import io.github.zxuhan.j2k.eval.postprocess.PostProcessor
 import io.github.zxuhan.j2k.eval.psi.KotlinPsiFactory
 import io.github.zxuhan.j2k.eval.report.JsonReporter
 import io.github.zxuhan.j2k.eval.report.MarkdownReporter
@@ -25,9 +26,30 @@ import kotlin.io.path.isDirectory
 import kotlin.io.path.walk
 import kotlin.io.path.writeText
 
-fun main(args: Array<String>) = Root().subcommands(Analyze()).main(args)
+fun main(args: Array<String>) = Root().subcommands(Analyze(), Postprocess()).main(args)
 
 private class Root : NoOpCliktCommand(name = "j2k-eval")
+
+private class Postprocess : CliktCommand(name = "postprocess") {
+
+    private val input by option("--input", help = "Directory of converted Kotlin files to fix")
+        .path(mustExist = true, canBeFile = false, canBeDir = true)
+        .required()
+
+    private val output by option("--output", help = "Directory where the rewritten Kotlin tree is written")
+        .path(canBeFile = false, canBeDir = true)
+        .required()
+
+    override fun run() {
+        KotlinPsiFactory().use { psi ->
+            val report = PostProcessor(psi).run(input, output)
+            System.err.println("postprocess: ${report.filesChanged}/${report.files.size} files changed, ${report.importsAddedTotal} imports added")
+            report.files.filter { it.changed }.take(20).forEach {
+                System.err.println("  ${it.path} += ${it.addedImports}")
+            }
+        }
+    }
+}
 
 private class Analyze : CliktCommand(name = "analyze") {
 
