@@ -10,7 +10,7 @@ help:
 	@echo "  convert           run j2k-runner on build/input -> build/converted"
 	@echo "  evaluate          run evaluator on build/converted -> build/report.{json,md}"
 	@echo "  all               fetch + resolve-classpath + convert + evaluate"
-	@echo "  eval-edge-cases   run pipeline on the custom edge-case dataset (commit 6)"
+	@echo "  eval-edge-cases   run pipeline on the custom edge-case dataset"
 	@echo "  ci-local          reproduce the full CI pipeline locally (commit 7+)"
 	@echo "  clean             remove build outputs and fetched sources"
 
@@ -34,7 +34,11 @@ evaluate:
 all: fetch resolve-classpath convert evaluate
 
 eval-edge-cases:
-	@echo "not yet — wired in commit 6"; exit 1
+	scripts/run-j2k.sh edge-cases build/edge-converted build/edge-diagnostics.json
+	./gradlew :evaluator:installDist -q --console=plain
+	evaluator/build/install/evaluator/bin/evaluator analyze \
+	    --input build/edge-converted \
+	    --out-dir build/edge-reports
 
 ci-local:
 	@echo "not yet — wired in commit 7"; exit 1

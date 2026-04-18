@@ -11,6 +11,11 @@ INPUT="${1:-$BUILD/input}"
 OUTPUT="${2:-$BUILD/converted}"
 DIAGNOSTICS="${3:-$BUILD/diagnostics.json}"
 
+# Resolve to absolute paths — the forked IDEA JVM runs with a different cwd.
+[[ "$INPUT" = /* ]] || INPUT="$ROOT/$INPUT"
+[[ "$OUTPUT" = /* ]] || OUTPUT="$ROOT/$OUTPUT"
+[[ "$DIAGNOSTICS" = /* ]] || DIAGNOSTICS="$ROOT/$DIAGNOSTICS"
+
 mkdir -p "$OUTPUT" "$(dirname "$DIAGNOSTICS")"
 
 echo "==> j2k: $INPUT -> $OUTPUT (diag: $DIAGNOSTICS)"
