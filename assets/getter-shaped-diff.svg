@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 460" width="1200" height="460" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" xml:space="preserve">
+  <defs>
+    <clipPath id="card-getter">
+      <rect width="1200" height="460" rx="10"/>
+    </clipPath>
+    <style>
+      .kw { fill: #ff7b72; }
+      .good { fill: #56d364; font-weight: 700; }
+      .ty { fill: #ffa657; }
+      .ann { fill: #d2a8ff; }
+      .com { fill: #8b949e; font-style: italic; }
+      .str { fill: #a5d6ff; }
+      .num { fill: #79c0ff; }
+    </style>
+  </defs>
+
+  <g clip-path="url(#card-getter)">
+    <rect width="1200" height="460" fill="#0d1117"/>
+
+    <rect width="1200" height="44" fill="#161b22"/>
+    <line x1="0" y1="44" x2="1200" y2="44" stroke="#30363d"/>
+    <text x="24" y="28" font-size="13" fill="#e6edf3"><tspan font-weight="700">GetterShaped</tspan>  ·  <tspan fill="#56d364">j2k correctly keeps the side-effecting getter as a function</tspan></text>
+
+    <text x="24" y="66" font-size="10" fill="#7d8590" letter-spacing="1">JAVA  ·  INPUT</text>
+    <text x="624" y="66" font-size="10" fill="#7d8590" letter-spacing="1">KOTLIN  ·  J2K OUTPUT</text>
+
+    <line x1="600" y1="44" x2="600" y2="400" stroke="#30363d"/>
+
+    <g font-size="13" fill="#c9d1d9">
+      <text x="24" y="92"><tspan class="kw">public</tspan> <tspan class="kw">final</tspan> <tspan class="kw">class</tspan> <tspan class="ty">GetterShaped</tspan> {</text>
+      <text x="24" y="114">    <tspan class="kw">private</tspan> <tspan class="kw">int</tspan> accessCount = <tspan class="num">0</tspan>;</text>
+      <text x="24" y="136">    <tspan class="kw">private</tspan> <tspan class="ty">String</tspan> label;</text>
+      <text x="24" y="180">    <tspan class="kw">public</tspan> <tspan class="ty">GetterShaped</tspan>(<tspan class="ty">String</tspan> label) { <tspan class="kw">this</tspan>.label = label; }</text>
+      <text x="24" y="224">    <tspan class="com">// Looks like a getter but mutates state.</tspan></text>
+      <text x="24" y="246">    <tspan class="kw">public</tspan> <tspan class="ty">String</tspan> getLabel() {</text>
+      <text x="24" y="268">        <tspan class="good">accessCount++;</tspan></text>
+      <text x="24" y="290">        <tspan class="kw">return</tspan> label + <tspan class="str">":"</tspan> + accessCount;</text>
+      <text x="24" y="312">    }</text>
+      <text x="24" y="356">    <tspan class="kw">public</tspan> <tspan class="kw">void</tspan> setLabel(<tspan class="ty">String</tspan> label) { <tspan class="kw">this</tspan>.label = label; }</text>
+      <text x="24" y="378">}</text>
+    </g>
+
+    <g font-size="13" fill="#c9d1d9">
+      <text x="624" y="92"><tspan class="kw">class</tspan> <tspan class="ty">GetterShaped</tspan>(<tspan class="kw">private</tspan> <tspan class="kw">var</tspan> label: <tspan class="ty">String</tspan>?) {</text>
+      <text x="624" y="114">    <tspan class="kw">private</tspan> <tspan class="kw">var</tspan> accessCount = <tspan class="num">0</tspan></text>
+      <text x="624" y="158">    <tspan class="com">// Looks like a getter but mutates state.</tspan></text>
+      <text x="624" y="180">    <tspan class="good">fun getLabel(): String {</tspan></text>
+      <text x="624" y="202">        accessCount++</text>
+      <text x="624" y="224">        <tspan class="kw">return</tspan> label + <tspan class="str">":"</tspan> + accessCount</text>
+      <text x="624" y="246">    }</text>
+      <text x="624" y="290">    <tspan class="kw">fun</tspan> setLabel(label: <tspan class="ty">String</tspan>?) {</text>
+      <text x="624" y="312">        <tspan class="kw">this</tspan>.label = label</text>
+      <text x="624" y="334">    }</text>
+      <text x="624" y="356">}</text>
+    </g>
+
+    <line x1="0" y1="400" x2="1200" y2="400" stroke="#30363d"/>
+    <rect y="400" width="1200" height="60" fill="#161b22"/>
+    <text x="24" y="434" font-size="13"><tspan fill="#56d364" font-weight="700">✓</tspan>  <tspan fill="#e6edf3">j2k detected the side-effecting mutation in </tspan><tspan fill="#56d364" font-weight="700">getLabel()</tspan><tspan fill="#e6edf3"> and resisted the property rewrite — kept it as a function, the smarter call.</tspan></text>
+
+    <rect x="0.5" y="0.5" width="1199" height="459" rx="10" fill="none" stroke="#30363d"/>
+  </g>
+</svg>

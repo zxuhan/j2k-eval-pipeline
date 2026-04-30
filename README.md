@@ -4,6 +4,8 @@ A GitHub Actions pipeline that runs IntelliJ's K2 Java-to-Kotlin converter headl
 
 **Target**: [OkHttp 3.14.9](https://github.com/square/okhttp/tree/parent-3.14.9) — the last pre-Kotlin-migration tagged release of Square's HTTP client. Picked because OkHttp 4.x+ is the maintainers' own hand-migrated Kotlin version of the same code, so *"how close did j2k get to the humans' Kotlin"* is an answerable question rather than a hand-wavy idiom score.
 
+![SealedShape · j2k silently drops the sealed modifier](assets/sealed-shape-diff.svg)
+
 ## Top-line numbers
 
 From the latest CI run, sourced from committed JSON artifacts under `build/`:
@@ -19,6 +21,18 @@ From the latest CI run, sourced from committed JSON artifacts under `build/`:
 | `!!` assertions in converted output | 159 (4.81 per kloc) |
 
 Full breakdown in [`EVALUATION_REPORT.md`](EVALUATION_REPORT.md). Per-edge-case hypothesis verdicts in [`EDGE_CASES_REPORT.md`](EDGE_CASES_REPORT.md).
+
+## Findings preview
+
+Two more illustrative cases from the 20 hand-written edge tests. The hero image above (`SealedShape`) is the third.
+
+![GetterShaped · j2k correctly keeps the side-effecting getter as a function](assets/getter-shaped-diff.svg)
+
+The hypothesis predicted j2k would aggressively rewrite `getFoo()`/`setFoo()` pairs into Kotlin properties, hiding the side effect from readers. j2k saw through it — detected the `accessCount++` mutation in the body and kept `getLabel()` as a function. Smarter than predicted.
+
+![SwitchPattern · j2k cannot parse Java 21 pattern-match switches](assets/switch-pattern-diff.svg)
+
+JEP 441 record-deconstruction pattern matching has no isomorphic Kotlin form, and j2k at IC-2025.2.6 does not attempt the lowering — emits empty `when` branches with unresolved variable references. The file does not compile. Reported alongside `SealedShape` as a fresh j2k bug surfaced from these edge cases.
 
 ## Quick start
 

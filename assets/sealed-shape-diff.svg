@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" xml:space="preserve">
+  <defs>
+    <clipPath id="card-sealed">
+      <rect width="1200" height="520" rx="10"/>
+    </clipPath>
+    <style>
+      .kw { fill: #ff7b72; }
+      .kwm { fill: #f85149; font-weight: 700; }
+      .ty { fill: #ffa657; }
+      .ann { fill: #d2a8ff; }
+    </style>
+  </defs>
+
+  <g clip-path="url(#card-sealed)">
+    <rect width="1200" height="520" fill="#0d1117"/>
+
+    <rect width="1200" height="44" fill="#161b22"/>
+    <line x1="0" y1="44" x2="1200" y2="44" stroke="#30363d"/>
+    <text x="24" y="28" font-size="13" fill="#e6edf3"><tspan font-weight="700">SealedShape</tspan>  ·  <tspan fill="#f85149">j2k silently drops the </tspan><tspan fill="#f85149" font-weight="700">sealed</tspan><tspan fill="#f85149"> modifier</tspan></text>
+
+    <text x="24" y="66" font-size="10" fill="#7d8590" letter-spacing="1">JAVA  ·  INPUT</text>
+    <text x="624" y="66" font-size="10" fill="#7d8590" letter-spacing="1">KOTLIN  ·  J2K OUTPUT</text>
+
+    <line x1="600" y1="44" x2="600" y2="460" stroke="#30363d"/>
+
+    <g font-size="13" fill="#c9d1d9">
+      <text x="24" y="92"><tspan class="kw">public</tspan> <tspan class="kwm">sealed</tspan> <tspan class="kw">interface</tspan> <tspan class="ty">SealedShape</tspan> <tspan class="kwm">permits</tspan> <tspan class="ty">Circle</tspan>, <tspan class="ty">Square</tspan> {</text>
+      <text x="24" y="114">    <tspan class="kw">double</tspan> area();</text>
+      <text x="24" y="136">}</text>
+      <text x="24" y="180"><tspan class="kw">record</tspan> <tspan class="ty">Circle</tspan>(<tspan class="kw">double</tspan> r) <tspan class="kw">implements</tspan> <tspan class="ty">SealedShape</tspan> {</text>
+      <text x="24" y="202">    <tspan class="ann">@Override</tspan> <tspan class="kw">public</tspan> <tspan class="kw">double</tspan> area() { <tspan class="kw">return</tspan> <tspan class="ty">Math</tspan>.PI * r * r; }</text>
+      <text x="24" y="224">}</text>
+      <text x="24" y="268"><tspan class="kw">record</tspan> <tspan class="ty">Square</tspan>(<tspan class="kw">double</tspan> side) <tspan class="kw">implements</tspan> <tspan class="ty">SealedShape</tspan> {</text>
+      <text x="24" y="290">    <tspan class="ann">@Override</tspan> <tspan class="kw">public</tspan> <tspan class="kw">double</tspan> area() { <tspan class="kw">return</tspan> side * side; }</text>
+      <text x="24" y="312">}</text>
+    </g>
+
+    <g font-size="13" fill="#c9d1d9">
+      <text x="624" y="92"><tspan class="kw">interface</tspan> <tspan class="ty">SealedShape</tspan> {</text>
+      <text x="624" y="114">    <tspan class="kw">fun</tspan> area(): <tspan class="ty">Double</tspan></text>
+      <text x="624" y="136">}</text>
+      <text x="624" y="180"><tspan class="ann">@kotlin.jvm.JvmRecord</tspan></text>
+      <text x="624" y="202"><tspan class="kw">internal</tspan> <tspan class="kw">data</tspan> <tspan class="kw">class</tspan> <tspan class="ty">Circle</tspan>(<tspan class="kw">val</tspan> r: <tspan class="ty">Double</tspan>) : <tspan class="ty">SealedShape</tspan> {</text>
+      <text x="624" y="224">    <tspan class="kw">override</tspan> <tspan class="kw">fun</tspan> area(): <tspan class="ty">Double</tspan> {</text>
+      <text x="624" y="246">        <tspan class="kw">return</tspan> <tspan class="ty">java.lang.Math</tspan>.PI * r * r</text>
+      <text x="624" y="268">    }</text>
+      <text x="624" y="290">}</text>
+      <text x="624" y="334"><tspan class="ann">@kotlin.jvm.JvmRecord</tspan></text>
+      <text x="624" y="356"><tspan class="kw">internal</tspan> <tspan class="kw">data</tspan> <tspan class="kw">class</tspan> <tspan class="ty">Square</tspan>(<tspan class="kw">val</tspan> side: <tspan class="ty">Double</tspan>) : <tspan class="ty">SealedShape</tspan> {</text>
+      <text x="624" y="378">    <tspan class="kw">override</tspan> <tspan class="kw">fun</tspan> area(): <tspan class="ty">Double</tspan> {</text>
+      <text x="624" y="400">        <tspan class="kw">return</tspan> side * side</text>
+      <text x="624" y="422">    }</text>
+      <text x="624" y="444">}</text>
+    </g>
+
+    <line x1="0" y1="460" x2="1200" y2="460" stroke="#30363d"/>
+    <rect y="460" width="1200" height="60" fill="#161b22"/>
+    <text x="24" y="494" font-size="13"><tspan fill="#f85149" font-weight="700">⚠</tspan>  <tspan fill="#e6edf3">Both </tspan><tspan fill="#f85149" font-weight="700">sealed</tspan><tspan fill="#e6edf3"> and </tspan><tspan fill="#f85149" font-weight="700">permits</tspan><tspan fill="#e6edf3"> are silently dropped — the Kotlin interface is openly extensible, no closed-hierarchy guarantee.</tspan></text>
+
+    <rect x="0.5" y="0.5" width="1199" height="519" rx="10" fill="none" stroke="#30363d"/>
+  </g>
+</svg>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" xml:space="preserve">
+  <defs>
+    <clipPath id="card-switch">
+      <rect width="1200" height="500" rx="10"/>
+    </clipPath>
+    <style>
+      .kw { fill: #ff7b72; }
+      .kwm { fill: #f85149; font-weight: 700; }
+      .ty { fill: #ffa657; }
+      .ann { fill: #d2a8ff; }
+    </style>
+  </defs>
+
+  <g clip-path="url(#card-switch)">
+    <rect width="1200" height="500" fill="#0d1117"/>
+
+    <rect width="1200" height="44" fill="#161b22"/>
+    <line x1="0" y1="44" x2="1200" y2="44" stroke="#30363d"/>
+    <text x="24" y="28" font-size="13" fill="#e6edf3"><tspan font-weight="700">SwitchPattern</tspan>  ·  <tspan fill="#f85149">j2k cannot parse Java 21 pattern-match switches</tspan></text>
+
+    <text x="24" y="66" font-size="10" fill="#7d8590" letter-spacing="1">JAVA  ·  INPUT</text>
+    <text x="624" y="66" font-size="10" fill="#7d8590" letter-spacing="1">KOTLIN  ·  J2K OUTPUT</text>
+
+    <line x1="600" y1="44" x2="600" y2="440" stroke="#30363d"/>
+
+    <g font-size="13" fill="#c9d1d9">
+      <text x="24" y="92"><tspan class="kw">public</tspan> <tspan class="kw">final</tspan> <tspan class="kw">class</tspan> <tspan class="ty">SwitchPattern</tspan> {</text>
+      <text x="24" y="114">    <tspan class="kw">sealed</tspan> <tspan class="kw">interface</tspan> <tspan class="ty">Shape</tspan> <tspan class="kw">permits</tspan> <tspan class="ty">C</tspan>, <tspan class="ty">R</tspan> {}</text>
+      <text x="24" y="136">    <tspan class="kw">record</tspan> <tspan class="ty">C</tspan>(<tspan class="kw">double</tspan> r) <tspan class="kw">implements</tspan> <tspan class="ty">Shape</tspan> {}</text>
+      <text x="24" y="158">    <tspan class="kw">record</tspan> <tspan class="ty">R</tspan>(<tspan class="kw">double</tspan> w, <tspan class="kw">double</tspan> h) <tspan class="kw">implements</tspan> <tspan class="ty">Shape</tspan> {}</text>
+      <text x="24" y="202">    <tspan class="kw">public</tspan> <tspan class="kw">static</tspan> <tspan class="kw">double</tspan> area(<tspan class="ty">Shape</tspan> s) {</text>
+      <text x="24" y="224">        <tspan class="kw">return</tspan> <tspan class="kw">switch</tspan> (s) {</text>
+      <text x="24" y="246">            <tspan class="kwm">case</tspan> <tspan class="ty">C</tspan> <tspan class="kwm">c -&gt;</tspan> <tspan class="ty">Math</tspan>.PI * c.r() * c.r();</text>
+      <text x="24" y="268">            <tspan class="kwm">case</tspan> <tspan class="ty">R</tspan> <tspan class="kwm">r -&gt;</tspan> r.w() * r.h();</text>
+      <text x="24" y="290">        };</text>
+      <text x="24" y="312">    }</text>
+      <text x="24" y="334">}</text>
+    </g>
+
+    <g font-size="13" fill="#c9d1d9">
+      <text x="624" y="92"><tspan class="kw">object</tspan> <tspan class="ty">SwitchPattern</tspan> {</text>
+      <text x="624" y="114">    <tspan class="kw">fun</tspan> area(s: <tspan class="ty">Shape</tspan>): <tspan class="ty">Double</tspan> {</text>
+      <text x="624" y="136">        <tspan class="kw">return</tspan> <tspan class="kw">when</tspan> (s) {</text>
+      <text x="624" y="158">            <tspan class="kwm">-&gt; java.lang.Math.PI * c.r * c.r</tspan></text>
+      <text x="624" y="180">            <tspan class="kwm">-&gt; r.w * r.h</tspan></text>
+      <text x="624" y="202">        }</text>
+      <text x="624" y="224">    }</text>
+      <text x="624" y="268">    <tspan class="kw">internal</tspan> <tspan class="kw">interface</tspan> <tspan class="ty">Shape</tspan></text>
+      <text x="624" y="312">    <tspan class="ann">@kotlin.jvm.JvmRecord</tspan></text>
+      <text x="624" y="334">    <tspan class="kw">internal</tspan> <tspan class="kw">data</tspan> <tspan class="kw">class</tspan> <tspan class="ty">C</tspan>(<tspan class="kw">val</tspan> r: <tspan class="ty">Double</tspan>) : <tspan class="ty">Shape</tspan></text>
+      <text x="624" y="378">    <tspan class="ann">@kotlin.jvm.JvmRecord</tspan></text>
+      <text x="624" y="400">    <tspan class="kw">internal</tspan> <tspan class="kw">data</tspan> <tspan class="kw">class</tspan> <tspan class="ty">R</tspan>(<tspan class="kw">val</tspan> w: <tspan class="ty">Double</tspan>, <tspan class="kw">val</tspan> h: <tspan class="ty">Double</tspan>) : <tspan class="ty">Shape</tspan></text>
+      <text x="624" y="422">}</text>
+    </g>
+
+    <line x1="0" y1="440" x2="1200" y2="440" stroke="#30363d"/>
+    <rect y="440" width="1200" height="60" fill="#161b22"/>
+    <text x="24" y="474" font-size="13"><tspan fill="#f85149" font-weight="700">⚠</tspan>  <tspan fill="#e6edf3">JEP 441 pattern-match </tspan><tspan fill="#f85149" font-weight="700">switch</tspan><tspan fill="#e6edf3"> is unsupported. j2k emits empty </tspan><tspan fill="#f85149" font-weight="700">when</tspan><tspan fill="#e6edf3"> branches with unresolved </tspan><tspan fill="#f85149" font-weight="700">c</tspan><tspan fill="#e6edf3"> and </tspan><tspan fill="#f85149" font-weight="700">r</tspan><tspan fill="#e6edf3"> references — the file does not compile.</tspan></text>
+
+    <rect x="0.5" y="0.5" width="1199" height="499" rx="10" fill="none" stroke="#30363d"/>
+  </g>
+</svg>
